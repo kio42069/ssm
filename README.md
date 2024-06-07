@@ -2,7 +2,7 @@
 A script to monitor your screentime usage
 
 # Screenshots
-![2024-06-07-214656_hyprshot](https://github.com/kio42069/ssm/assets/62372847/bd84e974-c9f6-466d-a5b0-c03306b101be)
+![2024-06-07-214656_hyprshot](https://github.com/kio42069/ssm/assets/62372847/da911509-baae-4fc5-8473-ce25f8d6a042)
 
 
 # Installation
