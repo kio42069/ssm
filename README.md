@@ -19,6 +19,9 @@ A script to monitor your screentime usage
 # Usage
 - Simply run `reader` to check your stats, and use the `-a` flag to check overall stats for all applications, along with the window names. 
 
+# Future Scope
+- Currently this script will keep on recording data, it does not have a database to store the data according to days
+- Will also work on a GUI applet, possibly one based on Java
 
 # Why
 Hello! I was trying to look out for some kind of a screentime monitor, like digital wellbeing exists for Android, but was unable to find anything good for Arch Linux and specifically for Hyprland. So here a small python script to help out with that!
