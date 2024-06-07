@@ -21,7 +21,7 @@ def help():
     """)
 
 if len(args) == 1:
-    with open(f"/usr/local/bin/all", "rb") as f:
+    with open(f"/home/{user}/all", "rb") as f:
         print()
         cols = execute_and_capture("tput cols")
         print("-"*int(cols))
@@ -35,7 +35,7 @@ if len(args) == 1:
         print("-"*int(cols))
 
 elif(args[1] == '-a' or args[1] == '-l'):
-    with open(f"/usr/local/bin/apps", "rb") as f:
+    with open(f"/home/{user}/apps", "rb") as f:
         print()
         a = pickle.load(f)
         a = dict(sorted(a.items(), key = lambda item: item[1], reverse=True))

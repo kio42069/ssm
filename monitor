@@ -10,16 +10,16 @@ def execute_and_capture(cmd):
     return output
   except subprocess.CalledProcessError:
     return ""
-
+cwd = os.getlogin()
 command_workspace = "hyprctl activeworkspace -j"
 command_windows = "hyprctl clients -j"
 windower = {}
 tabber = {}
-if(os.path.exists(f"/usr/local/bin/apps")):
+if(os.path.exists(f"/home/{cwd}/apps")):
       with open(f"/usr/local/bin/apps", "rb") as f:
         tabber = pickle.load(f)
-if(os.path.exists(f"/usr/local/bin/all")):
-      with open(f"/usr/local/bin/all", "rb") as f:
+if(os.path.exists(f"/home/{cwd}/all")):
+      with open(f"/home/{cwd}/all", "rb") as f:
         windower = pickle.load(f)
 
 while(True):
@@ -56,8 +56,8 @@ while(True):
               windower[title] = 1
             else:
               windower[title] += 1
-    with open(f"/usr/local/bin/apps", "wb") as f:
+    with open(f"/home/{cwd}/apps", "wb") as f:
       pickle.dump(tabber, f);
-    with open(f"/usr/local/bin/all", "wb") as f:
+    with open(f"/home/{cwd}/all", "wb") as f:
       pickle.dump(windower, f);
 
