@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+
+import sys, pickle, subprocess, os
+
+args = sys.argv
+user = os.getlogin()
+
+def execute_and_capture(cmd):
+  try:
+    process = subprocess.run(cmd, capture_output=True, text=True, shell=True)
+    output = process.stdout.strip()
+    return output
+  except subprocess.CalledProcessError:
+    return ""
+
+
+def help():
+    print("""
+    HELP HAS CUM
+    WELCOME TO SURT'S SCREENTIME MONITOR
+    """)
+
+if len(args) == 1:
+    with open(f"/usr/local/bin/all", "rb") as f:
+        print()
+        cols = execute_and_capture("tput cols")
+        print("-"*int(cols))
+        a = pickle.load(f)
+        a = dict(sorted(a.items(), key = lambda item: item[1], reverse=True))
+        for i in a:
+            timer = str(a[i]//3600)+"h"+" "+ str((a[i]//60)%60)+"m"
+            print("|", i, end = "")
+            print(" "*(int(cols)-len(i)-len(timer) - 5), end = "")
+            print(timer, "|")
+        print("-"*int(cols))
+
+elif(args[1] == '-a' or args[1] == '-l'):
+    with open(f"/usr/local/bin/apps", "rb") as f:
+        print()
+        a = pickle.load(f)
+        a = dict(sorted(a.items(), key = lambda item: item[1], reverse=True))
+        cols = execute_and_capture("tput cols")
+        print("-"*int(cols))
+        flag = False
+        for i in a:
+            timer = str(a[i]//3600)+"h" + " " + str((a[i]//60)%60)+"m"
+            if("0h 0m" in timer):
+                continue
+            else:
+                print("|", i,end = "")
+                print(" "*(int(cols)-len(i)-len(timer) - 5), end = "")
+                print(timer, "|")
+        print("-"*int(cols))
+elif args[1] == "-h":
+    help()
+else:
+    print("invalid lol, try again")
+
