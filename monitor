@@ -21,43 +21,45 @@ if(os.path.exists(f"/home/{cwd}/apps")):
 if(os.path.exists(f"/home/{cwd}/all")):
       with open(f"/home/{cwd}/all", "rb") as f:
         windower = pickle.load(f)
-
+print("Started!")
 while(True):
-  time.sleep(1)
-  output_string = execute_and_capture(command_workspace)
+  try:
+    time.sleep(1)
+    output_string = execute_and_capture(command_workspace)
 
-  workspace = json.loads(output_string)['id']
-  output_string = execute_and_capture(command_windows)
-  windows = json.loads(output_string)
-  for i in windows:
-    if i["workspace"]["id"] == workspace:
-      print(i['title'] + "####" + i['class'])
-      tab = i['title']
-      title = i['class']
-      if tab not in tabber:
-        tabber[tab] = 1
+    workspace = json.loads(output_string)['id']
+    output_string = execute_and_capture(command_windows)
+    windows = json.loads(output_string)
+    for i in windows:
+      if i["workspace"]["id"] == workspace:
+        tab = i['title']
+        title = i['class']
+        if tab not in tabber:
+          tabber[tab] = 1
+        else:
+          tabber[tab] += 1
+        if title not in windower:
+          windower[title] = 1
+        else:
+          windower[title] += 1
       else:
-        tabber[tab] += 1
-      if title not in windower:
-        windower[title] = 1
-      else:
-        windower[title] += 1
-    else:
-          news = execute_and_capture("hyprctl activewindow -j")
-          news = json.loads(news)
-          if news['workspace']['id'] < 0:
-            tab = news['title']
-            title = news['class']
-            if tab not in tabber:
-              tabber[tab] = 1
-            else:
-              tabber[tab] += 1
-            if title not in windower:
-              windower[title] = 1
-            else:
-              windower[title] += 1
-    with open(f"/home/{cwd}/apps", "wb") as f:
-      pickle.dump(tabber, f);
-    with open(f"/home/{cwd}/all", "wb") as f:
-      pickle.dump(windower, f);
+            news = execute_and_capture("hyprctl activewindow -j")
+            news = json.loads(news)
+            if news['workspace']['id'] < 0:
+              tab = news['title']
+              title = news['class']
+              if tab not in tabber:
+                tabber[tab] = 1
+              else:
+                tabber[tab] += 1
+              if title not in windower:
+                windower[title] = 1
+              else:
+                windower[title] += 1
+      with open(f"/home/{cwd}/apps", "wb") as f:
+        pickle.dump(tabber, f);
+      with open(f"/home/{cwd}/all", "wb") as f:
+        pickle.dump(windower, f);
+  except:
+        continue
 
