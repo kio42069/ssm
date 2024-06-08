@@ -22,6 +22,7 @@ if(os.path.exists(f"/home/{cwd}/all")):
       with open(f"/home/{cwd}/all", "rb") as f:
         windower = pickle.load(f)
 print("Started!")
+subprocess.Popen(['notify-send', "Monitor started!"])
 while(True):
   try:
     time.sleep(1)
