@@ -17,10 +17,13 @@ A script to monitor your screentime usage
 
 
 # Usage
-- Simply run `reader` to check your stats, and use the `-a` flag to check overall stats for all applications, along with the window names. 
+- Simply run `reader` to check your stats
+- ### Flags
+    - `-a` : flag to check overall stats for all applications, along with the window names.
+    - `-d` : flag to checks stats for a specific date. Example : `reader -d 2024-06-12`
 
 # Future Scope
-- Currently this script will keep on recording data, it does not have a database to store the data according to days
+- ~~Currently this script will keep on recording data, it does not have a database to store the data according to days~~
 - Will also work on a GUI applet, possibly one based on Java
 
 # Why

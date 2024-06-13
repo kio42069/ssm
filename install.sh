@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define files to copy (replace with actual filenames)
-files=("apps" "all" "reader" "monitor")
+files=("reader" "monitor")
 
 for file in "${files[@]}"; do
   # Check if file exists (assuming they are in the current directory)

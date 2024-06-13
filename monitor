@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import subprocess, time, json, pickle, os
+from datetime import date
 
-user = os.getlogin()
-
+# function to fetch any bash command form cli
 def execute_and_capture(cmd):
   try:
     process = subprocess.run(cmd, capture_output=True, text=True, shell=True)
@@ -10,57 +10,95 @@ def execute_and_capture(cmd):
     return output
   except subprocess.CalledProcessError:
     return ""
-cwd = os.getlogin()
+
+# setting variables
+user = os.getlogin()
 command_workspace = "hyprctl activeworkspace -j"
 command_windows = "hyprctl clients -j"
-windower = {}
-tabber = {}
-if(os.path.exists(f"/home/{cwd}/apps")):
-      with open(f"/usr/local/bin/apps", "rb") as f:
-        tabber = pickle.load(f)
-if(os.path.exists(f"/home/{cwd}/all")):
-      with open(f"/home/{cwd}/all", "rb") as f:
-        windower = pickle.load(f)
+windows_dict = {}
+subwindows_dict = {}
+today = str(date.today())
+base_dir = f"/home/{user}/.config/hypr/scripts/monitor"
+
+# if script is killed mid-day 
+# then will check if anu data already exists in the files, and copies them
+if(not os.path.exists(f"{base_dir}/")):
+    execute_and_capture(f"mkdir -p {base_dir}/")
+if(os.path.exists(f"{base_dir}/apps")):
+      with open(f"{base_dir}/apps", "rb") as f:
+        subwindows_dict = pickle.load(f)
+if(os.path.exists(f"{base_dir}/all")):
+      with open(f"{base_dir}/all", "rb") as f:
+        windows_dict = pickle.load(f)
+
 print("Started!")
 subprocess.Popen(['notify-send', "Monitor started!"])
+
+def copy_old_logs(a):
+  windows_dict = {}
+  subwindows_dict = {}
+  execute_and_capture(f"cp {base_dir}/all {base_dir}/all_{a}")
+  execute_and_capture(f"cp {base_dir}/apps {base_dir}/apps_{a}")
+  subprocess.Popen(['notify-send', "Logs Copied!"])
+
+# will check for windows every second and append to a dict
 while(True):
+  today = str(date.today())
+  try:
+    flag = True
+    with open(f"{base_dir}/date", "r") as f:
+      a = f.readlines()[0].strip()
+      if(a != today):
+        flag = False
+        copy_old_logs(a)
+    if not flag:
+      flag = not flag
+      with open(f"{base_dir}/date", "w") as f:
+        f.write(today + '\n')
+
+  except:
+    with open(f"{base_dir}/date", "w") as f:
+      f.write(today + '\n')
   try:
     time.sleep(1)
     output_string = execute_and_capture(command_workspace)
-
     workspace = json.loads(output_string)['id']
     output_string = execute_and_capture(command_windows)
     windows = json.loads(output_string)
+
     for i in windows:
       if i["workspace"]["id"] == workspace:
-        tab = i['title']
-        title = i['class']
-        if tab not in tabber:
-          tabber[tab] = 1
+        subwindow = i['title']
+        window = i['class']
+        if subwindow not in subwindows_dict:
+          subwindows_dict[subwindow] = 1
         else:
-          tabber[tab] += 1
-        if title not in windower:
-          windower[title] = 1
+          subwindows_dict[subwindow] += 1
+        if window not in windows_dict:
+          windows_dict[window] = 1
         else:
-          windower[title] += 1
+          windows_dict[window] += 1
       else:
+            # code for special workspaces
+            # hyprctl activeworkspace is a lil bitch 
             news = execute_and_capture("hyprctl activewindow -j")
             news = json.loads(news)
             if news['workspace']['id'] < 0:
-              tab = news['title']
-              title = news['class']
-              if tab not in tabber:
-                tabber[tab] = 1
+              subwindow = news['title']
+              window = news['class']
+              if subwindow not in subwindows_dict:
+                subwindows_dict[subwindow] = 1
               else:
-                tabber[tab] += 1
-              if title not in windower:
-                windower[title] = 1
+                subwindows_dict[subwindow] += 1
+              if window not in windows_dict:
+                windows_dict[window] = 1
               else:
-                windower[title] += 1
-      with open(f"/home/{cwd}/apps", "wb") as f:
-        pickle.dump(tabber, f);
-      with open(f"/home/{cwd}/all", "wb") as f:
-        pickle.dump(windower, f);
+                windows_dict[window] += 1
+                
+      with open(f"{base_dir}/apps", "wb") as f:
+        pickle.dump(subwindows_dict, f);
+      with open(f"{base_dir}/all", "wb") as f:
+        pickle.dump(windows_dict, f);
   except:
         continue
 
