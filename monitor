@@ -35,10 +35,12 @@ print("Started!")
 subprocess.Popen(['notify-send', "Monitor started!"])
 
 def copy_old_logs(a):
+  global windows_dict, subwindows_dict
   windows_dict = {}
   subwindows_dict = {}
   execute_and_capture(f"cp {base_dir}/all {base_dir}/all_{a}")
   execute_and_capture(f"cp {base_dir}/apps {base_dir}/apps_{a}")
+  execute_and_capture(f"rm {base_dir}/all {base_dir}/apps")
   subprocess.Popen(['notify-send', "Logs Copied!"])
 
 # will check for windows every second and append to a dict
@@ -99,6 +101,8 @@ while(True):
         pickle.dump(subwindows_dict, f);
       with open(f"{base_dir}/all", "wb") as f:
         pickle.dump(windows_dict, f);
+  except KeyboardInterrupt:
+    execute_and_capture('notify-send "Ending monitor..."')
+    break
   except:
         continue
-
