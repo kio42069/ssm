@@ -24,7 +24,12 @@ A script to monitor your screentime usage
 
 # Future Scope
 - ~~Currently this script will keep on recording data, it does not have a database to store the data according to days~~
-- Will also work on a GUI applet, possibly one based on Java
+- Shift from a binary files based logging system to a database style system
+- Create a GUI applet, possibly one based on Java
+- Create a web dashboard, based on Django since the project is based on python
 
-# Why
+# Motivation
 Hello! I was trying to look out for some kind of a screentime monitor, like digital wellbeing exists for Android, but was unable to find anything good for Arch Linux and specifically for Hyprland. So here a small python script to help out with that!
+
+# Credits 
+Created by kiddo42069
