@@ -60,7 +60,7 @@ elif(args[1] == '-l'):
             try:
                 number_of_results = int(args[2])
             except:
-                number_of_results = 10
+                number_of_results = len(a)
             counter = 0
             for i in a:
                 counter += 1
@@ -122,3 +122,9 @@ elif args[1] == "-d":
             execute_and_capture("notify-send 'log file not found, check your date, should be YYYY-MM-DD'")
     else:
         print("bro what")
+else:
+    cols = execute_and_capture("tput cols")
+    print("-"*int(cols))
+    e = execute_and_capture(f'reader -l 1000| grep -i "{args[1]}"')
+    print(e)
+    print("-"*int(cols))
