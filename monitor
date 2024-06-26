@@ -67,19 +67,22 @@ while(True):
     workspace = json.loads(output_string)['id']
     output_string = execute_and_capture(command_windows)
     windows = json.loads(output_string)
-
-    for i in windows:
-      if i["workspace"]["id"] == workspace:
-        subwindow = i['title']
-        window = i['class']
+    repeaters = {}
+    for window_iterator in windows:
+      if window_iterator["workspace"]["id"] == workspace:
+        subwindow = window_iterator['title']
+        window = window_iterator['class']
         if subwindow not in subwindows_dict:
           subwindows_dict[subwindow] = 1
         else:
           subwindows_dict[subwindow] += 1
         if window not in windows_dict:
           windows_dict[window] = 1
+          repeaters[window] = 1
         else:
-          windows_dict[window] += 1
+          if window not in repeaters:
+            repeaters[window] = 1
+            windows_dict[window] += 1
       else:
             # code for special workspaces
             # hyprctl activeworkspace is a lil bitch 
