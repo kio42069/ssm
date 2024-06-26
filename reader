@@ -135,8 +135,9 @@ else:
     lst = e.split('\n')
     for i in lst:
         time = i[-2:-10:-1].strip().split()
-        mins += int(time[0][1:])
-        hrs += int(time[1][1:])
+        print(time)
+        mins += int(time[0][1:][::-1])
+        hrs += int(time[1][1:][::-1])
     hrs += mins // 60
     mins = mins % 60
     print(f"\033[34;1mTotal Time: {hrs}h {mins}m\033[m")
