@@ -22,58 +22,60 @@ def help():
     WELCOME TO SURT'S SCREENTIME MONITOR
     """)
 
-def total(dic):
-    time_consumed = 0
-    for i in dic:
-        time_consumed += dic[i]
-    return time_consumed
-
 def timeify(num):
-    return str(num//3600) + "h " + str((num//60)%60) + "m"
+    hrs = num//3600
+    mins = ((num)//60)%60
+    return [hrs, mins, str(hrs) + "h " + str(mins) + "m"]
 
 # checks for command line arguments,if none passed, then uses this by default
 if len(args) == 1:
     try:
-        with open(f"{base_dir}/all", "rb") as f:
-            print()
-            cols = execute_and_capture("tput cols")
-            print("-"*int(cols))
-            a = pickle.load(f)
-            a = dict(sorted(a.items(), key = lambda item: item[1], reverse=True))
-            for i in a:
-                timer = timeify(a[i])
-                print("|", i, end = "")
-                print(" "*(int(cols)-len(i)-len(timer) - 5), end = "")
-                print(timer, "|")
-            print("-"*int(cols))
+        with open(f"{base_dir}/all", "rb") as file:
+            a = pickle.load(file)
+        print()
+        cols = execute_and_capture("tput cols")
+        print("-"*int(cols))
+        a = dict(sorted(a.items(), key = lambda item: item[1], reverse=True))
+        hrs = 0
+        mins = 0
+        for i in a:
+            time_lst = timeify(a[i])
+            hrs += time_lst[0]
+            mins += time_lst[1]
+            timer = time_lst[2]
+            print("|", i, end = "")
+            print(" "*(int(cols)-len(i)-len(timer) - 5), end = "")
+            print(timer, "|")
+        
+        print("-"*int(cols))
     except:
         execute_and_capture("notify-send 'log file not found, try running monitor first'")
 
 elif(args[1] == '-l'):
     try:
-        with open(f"{base_dir}/apps", "rb") as f:
-            a = pickle.load(f)
-            a = dict(sorted(a.items(), key = lambda item: item[1], reverse=True))
-            cols = execute_and_capture("tput cols")
-            print("-"*int(cols))
-            flag = False
-            try:
-                number_of_results = int(args[2])
-            except:
-                number_of_results = len(a)
-            counter = 0
-            for i in a:
-                counter += 1
-                timer = timeify(a[i])
-                if("0h 0m" in timer):
-                    continue
-                else:
-                    print("|", i,end = "")
-                    print(" "*(int(cols)-len(i)-len(timer) - 5), end = "")
-                    print(timer, "|")
-                if(counter == number_of_results):
-                    break
-            print("-"*int(cols))
+        with open(f"{base_dir}/apps", "rb") as file:
+            a = pickle.load(file)
+        a = dict(sorted(a.items(), key = lambda item: item[1], reverse=True))
+        cols = execute_and_capture("tput cols")
+        print("-"*int(cols))
+        flag = False
+        try:
+            number_of_results = int(args[2])
+        except:
+            number_of_results = len(a)
+        counter = 0
+        for i in a:
+            counter += 1
+            timer = timeify(a[i])[2]
+            if("0h 0m" in timer):
+                continue
+            else:
+                print("|", i,end = "")
+                print(" "*(int(cols)-len(i)-len(timer) - 5), end = "")
+                print(timer, "|")
+            if(counter == number_of_results):
+                break
+        print("-"*int(cols))
     except:
         execute_and_capture("notify-send 'log file not found, try running monitor first'")
 elif args[1] == "-h":
@@ -85,11 +87,11 @@ elif args[1] == "-d":
     choice = int(input())
     if choice == 1:
         try:
-            with open(f"{base_dir}/all_{date}", "rb") as f:
+            with open(f"{base_dir}/all_{date}", "rb") as file:
                 print()
                 cols = execute_and_capture("tput cols")
                 print("-"*int(cols))
-                a = pickle.load(f)
+                a = pickle.load(file)
                 a = dict(sorted(a.items(), key = lambda item: item[1], reverse=True))
                 for i in a:
                     timer = str(a[i]//3600)+"h"+" "+ str((a[i]//60)%60)+"m"
@@ -102,9 +104,9 @@ elif args[1] == "-d":
 
     elif choice == 2:
         try:
-            with open(f"{base_dir}/apps_{date}", "rb") as f:
+            with open(f"{base_dir}/apps_{date}", "rb") as file:
                 print()
-                a = pickle.load(f)
+                a = pickle.load(file)
                 a = dict(sorted(a.items(), key = lambda item: item[1], reverse=True))
                 cols = execute_and_capture("tput cols")
                 print("-"*int(cols))
@@ -123,8 +125,18 @@ elif args[1] == "-d":
     else:
         print("bro what")
 else:
+    mins = 0
+    hrs = 0
     cols = execute_and_capture("tput cols")
     print("-"*int(cols))
     e = execute_and_capture(f'reader -l 1000| grep -i "{args[1]}"')
     print(e)
     print("-"*int(cols))
+    lst = e.split('\n')
+    for i in lst:
+        time = i[-2:-10:-1].strip().split()
+        mins += int(time[0][1:])
+        hrs += int(time[1][1:])
+    hrs += mins // 60
+    mins = mins % 60
+    print(f"\033[34;1mTotal Time: {hrs}h {mins}m\033[m")
