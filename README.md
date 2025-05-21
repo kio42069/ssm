@@ -1,3 +1,7 @@
+# Deprecation warning
+Check out [hyprmonitor](https://github.com/kio42069/hyprmonitor) now!!
+This one still works fine, but new features will be rolled out in hyprmonitor
+
 # ssm
 A script to monitor your screentime usage
 
